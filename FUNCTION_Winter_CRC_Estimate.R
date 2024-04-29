@@ -40,12 +40,11 @@ Winter.CRC.Estimate.function <- function(Year=Year, data.name=data.name){
   catch$month=as.numeric(catch$month)
   catch$day=as.numeric(catch$day)
   
-  ####Remove catch from coastal Marine Areas
+  ####Remove catch from coastal Marine Areas/Columbia River
   unique(catch$area) #Identify Marine Areas in data frame
-  #Some Marine Areas are entered as NA or a number that doesn't make sense (e.g., '519')....set these to 192 (code for an unknown Marine Area)
-  catch$area[catch$area==519]=192
+  #Some Marine Areas are entered as NA or a number that doesn't make sense....set these to 192 (code for an unknown Marine Area)
   catch$area[is.na(catch$area)]=192
-  #Select only Puget Sound MA's (including unknown's)
+  #Select only Puget Sound MA's (including unknown's). If Code 519 is present: Salmon catch code for Columbia R. Buoy 10 to Rocky Pt.-Tongue Pt. line
   catch.crc2=catch %>% filter(area==4|area==5|area==6|area==7|area==8|area==81|area==82|area==9|
                                 area==10|area==11|area==12|area==13|area==192)
   
@@ -400,7 +399,7 @@ Winter.CRC.Estimate.function <- function(Year=Year, data.name=data.name){
 #!!!!!!!!!!!!!!#
 
 ##Define the CRC year of interest
-Year=2008
+Year=2023
 
 #Define the winter CRC file name (Example: Catch Data Winter 2022.xlsx)
 data.name=paste0("Catch Data Winter ",Year,".xlsx")

@@ -26,6 +26,7 @@ Summer.CRC.Estimate.function <- function(Year=Year, data.name=data.name){
   #Bring in data files
   catch.crc=read_excel(paste0(current.directory,data.name))
   
+  
 ############Clean data############
   
   #Optional step: Create new column to define successful trips (at least 1 crab caught) and remove unsuccessful trips (crab=0)
@@ -407,7 +408,7 @@ Summer.CRC.Estimate.function <- function(Year=Year, data.name=data.name){
 Year=2023
 
 #Define the summer CRC file name (Example: Catch Data Summer 2022.xlsx)
-data.name=paste0("Catch_Data_Summer_",Year,".xlsx")
+data.name=paste0("Catch Data Summer ",Year,".xlsx")
 
 
 ######RUN FUNCTION
