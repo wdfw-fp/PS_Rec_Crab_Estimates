@@ -220,10 +220,10 @@ Summer.CRC.Estimate.function <- function(Year=Year, data.name=data.name){
   month.prop[is.na(month.prop)]=0
   ##Special case when total catch during known months for a marine area=0 but some unknown catch is present: 
   ##When calculating catch proportions, each month will calculate to 0 (or NA) and cant apportion unknown catch.
-  ##If total catch is 0 for known months for a marine area, assign 0.25 as the catch proportion for each month.
+  ##If total catch is 0 for known months for a marine area, assign 0.3333 as the catch proportion for each month.
   for(i in 1:12){
     if(sum(month.prop[i,1:3])==0){
-      month.prop[i,1:3]=0.25}}
+      month.prop[i,1:3]=1/3}}
   Table3[1:12,2:4]=(month.prop*Table3[1:12,5])+(Table3[1:12,2:4])
   #Now remove unknown date column
   Table3=Table3[,-c(5)]
