@@ -17,3 +17,16 @@ First Steps (SUMMER ONLY):
 5. Fit probability distribution to % on-time cards (total, mail in, online) - data available in most recent memo
 6. Fit probability distribution to % late cards (use place holder until available)
 
+Simulate Data Steps:
+Just wanted to check in before my meeting with Katelyn. Can you confirm this is what you saw as the plan for the simulated data?
+
+For a prespecified issued number of licenses:
+1. Specify probability returned (either define it to do sensitivity testing, or draw from a uniform distribution of the range of % returned), calculate number returned
+2. Specify probability mailed in (define or runif), calculate number mailed in and number online
+3. Specify probability late (define it or runif), calculate number late
+4. Simulate Returned CRCs (draw from negbinomial or resampling from the database, can do this for all CRCs at once or for mail/online separately)
+5. Simulate NonResponse Catch by ID (draw from negative binomial or resampling from survey data)
+6. Simulate Late Data -- either from response or survey depending on the hypothesis you want to test
+7. Calculate Total Catch from 4 + 5 + 6
+8. Compare Total Catch in 7 to what we would estimate the catch to be with proposed/original methods
+
