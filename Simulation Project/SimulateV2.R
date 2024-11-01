@@ -19,6 +19,7 @@ library(EnvStats)
 
 
 ## Negative binomial dist parameters -------------------------------
+# reads in parameters that were saved
 nbinom_SummerCRCbyID<- readRDS("nbinomRDS/nbinom_SummerCRCbyID.rds")
 nbinom_SummerCRCbyID2<- nbinom_SummerCRCbyID[1]
 allsize<- nbinom_SummerCRCbyID2$estimate[1]
@@ -40,6 +41,7 @@ surveysize<- nbinom_SurveyData22232$estimate[1]
 surveymu<- nbinom_SurveyData22232$estimate[2]
 
 ## Data Tibbles ------------------------------------------------------
+# reads in tibbles
 
 SummerCRCbyID<- readRDS("DataRDS/SummerCRCbyID.rds")
 SummerCRCbyID0823S<- readRDS("DataRDS/SummerCRCbyID0823S.rds")
@@ -72,8 +74,8 @@ resample_function <- function(ogdata, nsamp) {
 # nissued = # of CRCs issued
 # setpret, if = 99 use runif to draw percent returned, else = the percent returned specified
 # samptype for mail/online/late if = 1 resample, if = 2 nbinom
-# latecat = 3 for mail
-# samptypenr for nonresponse survey type
+# latecat = should you sample the late population from mail or survey group = 3 for mail, 4 for survey
+# samptypenr for nonresponse survey type, same parameters as samp type
 
 
 SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat, samptypenr){
@@ -96,7 +98,7 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
   Returned<- PRet * Issued #calculate # cards returned
   
   
-  # Sample proportion mail/online
+  # Sample proportion mail/online from uniform distribution if = 99
   if(setpmail == 99){
     PMail<- runif(1, min = min(CRCTotals$Perc_Mail), max (CRCTotals$Perc_Mail))
   } else{PMail <- setpmail}
@@ -105,7 +107,7 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
   ReturnedOnline<- Returned - ReturnedMail  #calculate # returned via online
   
   
-  # Sample proportion late
+  # Sample proportion late from uniform distribution if = 99
   
   if(setplate== 99){
     PLate <- runif(1, min = min(LateSummary$SummerRatio), max = max(LateSummary$SummerRatio))
@@ -135,49 +137,51 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
 
   
   if(samptype == 1){
-    # Simulate Mail CRCs
+    # Simulate Mail CRCs using resample function
     resampledata_Mail<- resample_function(ogdata = SummerCRCbyID0823S, nsamp = ReturnedMail)
-    SimMailCatch<- resampledata_Mail[[2]]
-    SimMailCatch_total<- sum(SimMailCatch$TotalCrabID)
-    MeanMailCatch<- mean(SimMailCatch$TotalCrabID)
+    SimMailCatch<- resampledata_Mail[[2]] # Catch tibble
+    SimMailCatch_total<- sum(SimMailCatch$TotalCrabID) #calculates total mail catch
+    MeanMailCatch<- mean(SimMailCatch$TotalCrabID)  #calculates mean catch/id
     
-    # Simulate Online CRCs
+    # Simulate Online CRCs using resample function
     resampledata_Online<- resample_function(ogdata = SummerCRCbyID0823I, nsamp = ReturnedOnline)
-    SimOnlineCatch<- resampledata_Online[[2]]
-    SimOnlineCatch_total<- sum(SimOnlineCatch$TotalCrabID)
+    SimOnlineCatch<- resampledata_Online[[2]] #catch tibble
+    SimOnlineCatch_total<- sum(SimOnlineCatch$TotalCrabID) #calculates total online catch
     
-    MeanOnTimeCatch<- mean(c(SimMailCatch$TotalCrabID, SimOnlineCatch$TotalCrabID))
+    MeanOnTimeCatch<- mean(c(SimMailCatch$TotalCrabID, SimOnlineCatch$TotalCrabID)) #mean catch from all people who responded on time
     
   } else if (samptype == 2){
     
-    # Simulate Mail CRCs
+    # Simulate Mail CRCs from nbinom distribution
     simrnbinomS<- rnbinom(n = ReturnedMail, size = mailsize, mu = mailmu )
-    SimMailCatch_total<- sum(simrnbinomS)
-    MeanMailCatch<- mean(simrnbinomS)
+    SimMailCatch_total<- sum(simrnbinomS) #total mail catch
+    MeanMailCatch<- mean(simrnbinomS) #average mail catch/id
     
-    # Simulate Online CRCs
+    # Simulate Online CRCs from nbinom
     simrnbinomI<- rnbinom(n = ReturnedOnline, size = onlinesize, mu = onlinemu )
     SimOnlineCatch_total <- sum(simrnbinomI)
     
-    MeanOnTimeCatch<- mean(c(simrnbinomS, simrnbinomI))
+    MeanOnTimeCatch<- mean(c(simrnbinomS, simrnbinomI)) #mean catch/id from all on time respondents
   }
   
 
   ### Late Catch --------------------------------------------------------------
 
+  # type 3 = mail
+  # type 4 = survey
   
   if(latecat == 3){
     
     # Assume comes from mail distribution
     
     if(samptype == 1){
-       
+       # resample from on time mail data
       resampledata_Late<- resample_function(ogdata = SummerCRCbyID0823S, nsamp = Late)
       SimLateCatch<- resampledata_Late[[2]]
       SimLateCatch_total<- sum(SimLateCatch$TotalCrabID)
       
     } else if (samptype == 2){
-      
+      # sample from on time mail nbinom dist
       simrnbinomL<- rnbinom(n = Late, size = mailsize, mu = mailmu )
       SimLateCatch_total<- sum(simrnbinomL)
       
@@ -188,13 +192,13 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
     # Assume comes from Nonresponse survey distribution
     
     if(samptypenr == 1){
-      
+      # resample from 2022-23 survey data
       resampledata_Late <- resample_function(ogdata = SurveyData2223, nsamp = Late)
       SimLateCatch<- resampledata_Late[[2]]
       SimLateCatch_total<- sum(SimLateCatch$TotalCrabID)
       
     } else if (samptypenr == 2){
-      
+      # sample from 2022-23 survey data nbinom dist
       simrnbinomL<-  rnbinom(n = Late,  size = surveysize, mu = surveymu)
       SimLateCatch_total<- sum(simrnbinomL)
       
@@ -204,18 +208,21 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
   
 
 
-  ### Survey Catch ------------------------------------------------------------
-
+  ### Non-Respondants ------------------------------------------------------------
+  # Simulate people who didnt turn in CRC using survey data
+  # type 1 = resample
+  # type 2 = nbinom
+  
   
   if(samptypenr == 1){
+    # resample from 2022-23 survey data
     resampledata_NR<- resample_function(ogdata = SurveyData2223, nsamp = NoResponse)
     SimNRCatch<- resampledata_NR[[2]]
     SimNRCatch_total<- sum(SimNRCatch$TotalCrabID)
     
     
   } else if(samptypenr == 2){
-    
-    # Simulate Didn't Respond
+    # sample from 2022-23 survey data nbinom distribution
     nbinom_NR<-  rnbinom(n = NoResponse,  size = surveysize, mu = surveymu)
     SimNRCatch_total<- sum(nbinom_NR)
     
