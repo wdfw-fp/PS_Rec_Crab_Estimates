@@ -143,6 +143,7 @@ hist(simrnbinomSurv, breaks = max(simrnbinomSurv))
 
 
 # Resample to generate new data -------------------------------------------
+# Creates resample function -- samples nsamp number of cards from specified original data set
 
 resample_function <- function(ogdata, nsamp) {
   ncrc<- nrow(ogdata)
@@ -151,6 +152,7 @@ resample_function <- function(ogdata, nsamp) {
   return (list(samplerowid = samplerowid, resampledata = resampledata))
 }
 
+# plots a histogram of the resampled data
 plothistresample_function <- function(resampleoutput){
   resampledata<- resampleoutput[[2]]
   hist(resampledata$TotalCrabID, breaks = max(resampledata$TotalCrabID))
