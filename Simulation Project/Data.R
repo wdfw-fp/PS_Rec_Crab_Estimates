@@ -26,7 +26,7 @@ library(EnvStats)
 # ST version - I made the blanks = zeroes (except one row that had a blank in original)
 
 
-Survey2022<- read_csv("RM_NonResponse_Data_Summer_2022_ST.csv", col_types = list(ID = col_factor()))
+Survey2022<- read_csv("OriginalData/RM_NonResponse_Data_Summer_2022_ST.csv", col_types = list(ID = col_factor()))
 Survey2022<- Survey2022[,1:9] #remove unused columns
 
 
@@ -88,10 +88,10 @@ Survey2022byIDAll<- Survey2022byIDAll %>%
 # This is the original version, not from Lucas - could be switched
 
 # Trip file only contains people who fished
-Survey2023<- read_csv("2023_Summer_Nonresponse_Trip_Data.csv", col_types = list(rmcase = col_factor()))
+Survey2023<- read_csv("OriginalData/2023_Summer_Nonresponse_Trip_Data.csv", col_types = list(rmcase = col_factor()))
 
 # Full data
-Survey2023Full<- read_csv("2023_Summer_Nonresponse_Full_Data.csv") #warnings when you read this in
+Survey2023Full<- read_csv("OriginalData/2023_Summer_Nonresponse_Full_Data.csv") #warnings when you read this in
 Survey2023Full %>% count(wcat) 
 #cat 1 and 3 are people who harvested = 1124
 #cat 2 and 4 are people who didnt harvest = 3560
@@ -149,7 +149,7 @@ nrow(Survey2023byIDAll) + nrow(Survey2022byIDAll) - nrow(SurveyData2223) #should
 
 ## Percent late  --------------------------------------------------------
 # 
-LateSummary<- read_csv("Late_Card_Data_Summary.csv", col_types = list(Year = col_factor()))
+LateSummary<- read_csv("OriginalData/Late_Card_Data_Summary.csv", col_types = list(Year = col_factor()))
 head(LateSummary)
 
 MinSummerRatio<- min(LateSummary$SummerRatio) #0.17
@@ -165,7 +165,7 @@ SDSummerRatio<- sd(LateSummary$SummerRatio) #0.06795423
 # From Memo
 # Check to see if this matches dataset
 
-CRCTotals<- read_csv("CRCTotals_Summer2023Memo_Thurner.csv", na = c("", "NA"), col_types = list(Year = col_factor(), Season = col_factor(), Issued = col_integer(), Mail_Reported = col_integer(), Online_Reported = col_integer(), Total_Reported = col_integer(), Unreported = col_integer(), Endorsements = col_integer()))
+CRCTotals<- read_csv("OriginalData/CRCTotals_Summer2023Memo_Thurner.csv", na = c("", "NA"), col_types = list(Year = col_factor(), Season = col_factor(), Issued = col_integer(), Mail_Reported = col_integer(), Online_Reported = col_integer(), Total_Reported = col_integer(), Unreported = col_integer(), Endorsements = col_integer()))
 head(CRCTotals)
 
 CRCTotals<- CRCTotals %>% 
@@ -181,12 +181,12 @@ CRCTotals<- CRCTotals %>%
 ## CRC Data --------------------------------------------------------
 
 # Read in Data (Merged, multi year, by season)
-AllCRC<- read_csv("Merged_CRC_Data_years_seasons.csv", na = c("", "NA"), col_types = list(area = col_factor(), month = col_integer(), day = col_integer(), year = col_integer(), num_crab = col_double(), cardtype = col_factor(), ID = col_integer()))
+AllCRC<- read_csv("OriginalData/Merged_CRC_Data_years_seasons.csv", na = c("", "NA"), col_types = list(area = col_factor(), month = col_integer(), day = col_integer(), year = col_integer(), num_crab = col_double(), cardtype = col_factor(), ID = col_integer()))
 # area, month, day, year, num_crab, cardtype, ID
 # columns were reading in weird, specified in readr call
 
 # Read in Data with YEARS as FACTOR instead of INTEGER
-AllCRC2<- read_csv("Merged_CRC_Data_years_seasons.csv", na = c("", "NA"), col_types = list(area = col_factor(), month = col_integer(), day = col_integer(), year = col_factor(), num_crab = col_double(), cardtype = col_factor(), ID = col_integer()))
+AllCRC2<- read_csv("OriginalData/Merged_CRC_Data_years_seasons.csv", na = c("", "NA"), col_types = list(area = col_factor(), month = col_integer(), day = col_integer(), year = col_factor(), num_crab = col_double(), cardtype = col_factor(), ID = col_integer()))
 AllCRC2 <- AllCRC2 %>%
   mutate(year = fct_rev(year)) #Reverse the year factor so that it plots in chronological order
 
