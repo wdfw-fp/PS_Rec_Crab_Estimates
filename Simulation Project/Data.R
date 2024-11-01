@@ -31,20 +31,20 @@ Survey2022<- Survey2022[,1:9] #remove unused columns
 
 
 #From Lucas (Tulalip) presentation = 2,543 returned and did NOT fish
-#Generate fake data 
-NoFishNum<- 2543
-GibsSeq<- rep("Gibson", NoFishNum)
+#Generate fake data -- need 0's for all of the people who didn't fish
+NoFishNum<- 2543  #set number of people
+GibsSeq<- rep("Gibson", NoFishNum) # generating fake IDs
 IDseq<- 1:2543
 FakeCatch<- rep(0, NoFishNum)
 
-STFakeData<- tibble(Gibs = GibsSeq, No = IDseq, TotalCrabID = FakeCatch)
+STFakeData<- tibble(Gibs = GibsSeq, No = IDseq, TotalCrabID = FakeCatch) 
 STFakeData<- STFakeData %>% unite(ID, c("Gibs", "No"))
 
 
 #### Group data by wild id ------------------------------------------------------
 # This would allow looking at catch/card (i.e. catch/wild id) by year, only one year of data
 
-# Group by ID-- should be equivalent to a CRC as it combines all trips by year/id
+# Group by ID-- should be equivalent to a 'CRC' as it combines all trips by year/id
 Survey2022byID<- Survey2022 %>% 
   group_by(ID) %>% 
   summarise(TotalCrabID = sum(nmcrb, na.rm = TRUE))
@@ -59,12 +59,12 @@ SDSurveyTotalCrab<- sd(Survey2022byID$TotalCrabID) #8.088617
 
 #### Merge with Fake Data ----------------------------------------------------
 
-
+# merge survey data with fake data 
 Survey2022byIDAll<- bind_rows(Survey2022byID, STFakeData)
 
 933 + 2543 - nrow(Survey2022byIDAll) #should be 0
 
-Survey2022byIDAll %>% filter(TotalCrabID == 5.97)
+Survey2022byIDAll %>% filter(TotalCrabID == 5.97)  
 
 
 
@@ -72,6 +72,7 @@ Survey2022byIDAll %>% filter(TotalCrabID == 5.97)
 
 # Remove decimals so I can use a NB
 # The rows for this ID all look wonky
+
 Survey2022byIDAll %>% filter(TotalCrabID == 5.97)
 # A tibble: 1 × 2
 #ID          TotalCrabID
@@ -79,6 +80,7 @@ Survey2022byIDAll %>% filter(TotalCrabID == 5.97)
 # 0.659844727        5.97
 
 
+# rounds to get rid of decimals
 Survey2022byIDAll<- Survey2022byIDAll %>%
   mutate(TotalCrabIDNew = case_when(ID == 0.659844727  ~ round(TotalCrabID),
                                     ID != 0.659844727 ~ TotalCrabID))
@@ -133,6 +135,8 @@ Survey2023byIDAll<- bind_rows(Survey2023byID, STFakeData23)
 
 
 ### 2022+2023 ---------------------------------------------------------------
+# combine 2022 and 2023 survey data into one tibble 
+
 Temp2023<- rename(Survey2023byIDAll, ID = rmcase)
 Temp2023<- Temp2023 %>% mutate(Year = 2023)
 Temp2022<- Survey2022byIDAll[,c(1,3)]
@@ -143,12 +147,14 @@ Temp2022<- Temp2022 %>% mutate(Year = 2022)
 
 SurveyData2223<- bind_rows(Temp2022, Temp2023)
 
-nrow(Survey2023byIDAll) + nrow(Survey2022byIDAll) - nrow(SurveyData2223) #should be 0
+nrow(Survey2023byIDAll) + nrow(Survey2022byIDAll) - nrow(SurveyData2223) #should be 0, makes sure didnt lose any data
 
 
 
 ## Percent late  --------------------------------------------------------
-# 
+
+# read in late survey data summery file from Blair W.
+
 LateSummary<- read_csv("OriginalData/Late_Card_Data_Summary.csv", col_types = list(Year = col_factor()))
 head(LateSummary)
 
