@@ -1,13 +1,11 @@
 Stephanie Thurner's files (NWIFC) - 11/1/24
 
 Files:
-1. Data.R reads in summer data, processes data as needed, saves rds data objects
-2. SimulateData - Fits nbinom distributions, saves distributions
+1. Data.R reads in summer data from OriginalData folder, processes data as needed, saves rds data objects in DataRDS
+2. SimulateData - Fits nbinom distributions, saves distributions in nbinomRDS folder
 3. SimulateV2.R (Should rename) - defines function to simulate 1 year of catch
 4. RunSimulationsV2.R - runs simulations, plots results. If you have all of my data folders, you can run this alone.
    
-Folders that are needed but not uploaded: OriginalData, nbinomRDS, DataRDS
-
 
 Stephanie Thurner (NWIFC) and Katelyn Bosley (WDFW) Plan - 10/15/24
 
