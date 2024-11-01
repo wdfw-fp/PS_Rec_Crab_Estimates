@@ -6,6 +6,7 @@ source("SimulateV2.R") #loads data, functions
 
 library(gridExtra)
 library(grid)
+library(reshape2)
 
 # Reminder of Simulation Function Parameters
 # nissued = # of CRCs issued
@@ -29,16 +30,21 @@ RunSims<- function(nloop, nissued, setpret, setpmail, setplate, samptype, lateca
   
   for(sim in 1:nloop){
     
+    # simulate one year of catch
     SimRes<- SimulateCatch(nissued = nissued, setpret = setpret, setpmail = setpmail, setplate = setplate, samptype = samptype, latecat = latecat, samptypenr = samptypenr)
     
+    # calculate 'error' 
     ErrorinCatchNWIFC<-  SimRes[[3]]$TotalNWIFC - SimRes[[2]]$Total  # estimated - observed, + would be overestimate, - would be underestimate
     ErrorinCatchWDFW<- SimRes[[4]]$TotalWDFW - SimRes[[2]]$Total  # estimated - observed, + would be overestimate, - would be underestimate
     
+    #calculate percent error
     PercentErrorNWIFC<- ErrorinCatchNWIFC/SimRes[[2]]$Total #error as % of true catch
     PercentErrorWDFW<- ErrorinCatchWDFW/SimRes[[2]]$Total #error as % of true catch
     
+    # save error as tibble
     ErrorTibble<- tibble(ErrorinCatchNWIFC = ErrorinCatchNWIFC, PercentErrorNWIFC = PercentErrorNWIFC, ErrorinCatchWDFW = ErrorinCatchWDFW, PercentErrorWDFW = PercentErrorWDFW)
     
+    # store catch and error tible
     SimRes<- list(SimRes, ErrorTibble)
     
     StoreSimResults[[sim]]<- SimRes
@@ -102,12 +108,18 @@ PlotSims<- function(StoreSimResults, PlotTitle){
     geom_point() +
     labs(title = "WDFW Original", x = "Total Catch", y = "WDFW Estimated Catch")
   
-  grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=3, top = textGrob(PlotTitle))
+  plot7<- ggplot(Resultstoplot, aes(x = ErrorinCatchWDFW, y = ErrorinCatchNWIFC)) +
+    geom_point() +
+    labs(x = "Error in Catch WDFW", y = "Error in Catch NWIFC")
+  
+  plot8<- ggplot(Resultstoplot, aes(x = TotalWDFW, y = TotalNWIFC)) +
+    geom_point() +
+    labs(x = "Total WDFW", y = "Total NWIFC")
+  
+  grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, plot7,plot8, ncol=3, top = textGrob(PlotTitle))
+  
+  
 }
-
-
-
-
 
 
 
@@ -117,12 +129,36 @@ PlotSims<- function(StoreSimResults, PlotTitle){
 
 Simulation1<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = 99, samptype = 2, latecat = 3, samptypenr = 2)
 
+#pdf("Plots/Simulation1.pdf")
 PlotSims(StoreSimResults = Simulation1, PlotTitle = "Everything Random, All Nbinom, Late from Mail")
-
+#dev.off()
 
 # Simulation 2: Everything Random, All nbinom, Late from survey -----------
 
 Simulation2<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = 99, samptype = 2, latecat = 4, samptypenr = 2)
+
+#pdf("Plots/Simulation2.pdf")
 PlotSims(StoreSimResults = Simulation2, PlotTitle = "Everything Random, All Nbinom, Late from Survey")
+#dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
