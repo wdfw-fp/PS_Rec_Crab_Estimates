@@ -5,6 +5,7 @@ Files:
 2. SimulateData - Fits nbinom distributions, saves distributions in nbinomRDS folder
 3. SimulateV2.R (Should rename) - defines function to simulate 1 year of catch
 4. RunSimulationsV2.R - runs simulations, plots results. If you have all of my data folders, you can run this alone.
+5. RunSensitivity.R - runs sensitivity analysis -- does not yet have function for plotting results but has an example of how to plot them
    
 
 Stephanie Thurner (NWIFC) and Katelyn Bosley (WDFW) Plan - 10/15/24
