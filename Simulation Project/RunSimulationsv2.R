@@ -124,38 +124,61 @@ PlotSims<- function(StoreSimResults, PlotTitle){
 
 
 
+# 
+# # Simulation 1: Everything Random, All nbinom, Late from Mail -----------------------------
+# 
+# Simulation1<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = 99, samptype = 2, latecat = 3, samptypenr = 2)
+# 
+# #pdf("Plots/Simulation1.pdf")
+# PlotSims(StoreSimResults = Simulation1, PlotTitle = "Everything Random, All Nbinom, Late from Mail")
+# #dev.off()
+# 
+# # Simulation 2: Everything Random, All nbinom, Late from survey -----------
+# 
+# Simulation2<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = 99, samptype = 2, latecat = 4, samptypenr = 2)
+# 
+# #pdf("Plots/Simulation2.pdf")
+# PlotSims(StoreSimResults = Simulation2, PlotTitle = "Everything Random, All Nbinom, Late from Survey")
+# #dev.off()
 
-# Simulation 1: Everything Random, All nbinom, Late from Mail -----------------------------
-
-Simulation1<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = 99, samptype = 2, latecat = 3, samptypenr = 2)
-
-#pdf("Plots/Simulation1.pdf")
-PlotSims(StoreSimResults = Simulation1, PlotTitle = "Everything Random, All Nbinom, Late from Mail")
-#dev.off()
-
-# Simulation 2: Everything Random, All nbinom, Late from survey -----------
-
-Simulation2<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = 99, samptype = 2, latecat = 4, samptypenr = 2)
-
-#pdf("Plots/Simulation2.pdf")
-PlotSims(StoreSimResults = Simulation2, PlotTitle = "Everything Random, All Nbinom, Late from Survey")
-#dev.off()
-
-
-
-
-
-
-
-
-
-
-
+# 
+# # Simulation 3: All nbinom, Late from survey, plate = .01  -----------
+# 
+# Simulation3<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = .01, samptype = 2, latecat = 4, samptypenr = 2)
+# 
+# pdf("Plots/Simulation3.pdf")
+# PlotSims(StoreSimResults = Simulation3, PlotTitle = "plate = .01, All Nbinom, Late from Survey")
+# dev.off()
 
 
 
+# # Simulation 4: All nbinom, Late from survey, plate = .8  -----------
+
+# Simulation4<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = .8, samptype = 2, latecat = 4, samptypenr = 2)
+# 
+# pdf("Plots/Simulation4.pdf")
+# PlotSims(StoreSimResults = Simulation4, PlotTitle = "plate = 0.8, All Nbinom, Late from Survey")
+# dev.off()
 
 
+
+# Simulation 5: All nbinom, Late from mail, plate = .01  -----------
+# 
+# Simulation5<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = .01, samptype = 2, latecat = 3, samptypenr = 2)
+# 
+# pdf("Plots/Simulation5.pdf")
+# PlotSims(StoreSimResults = Simulation5, PlotTitle = "plate = .01, All Nbinom, Late from Mail")
+# dev.off()
+
+
+
+# Simulation 6: All nbinom, Late from mail, plate = .8  -----------
+# 
+# Simulation6<- RunSims(nloop = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = .8, samptype = 2, latecat = 3, samptypenr = 2)
+# 
+# pdf("Plots/Simulation6.pdf")
+# PlotSims(StoreSimResults = Simulation6, PlotTitle = "plate = 0.8, All Nbinom, Late from Mail")
+# dev.off()
 
 
 
