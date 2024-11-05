@@ -2,6 +2,8 @@
 # S. Thurner
 # 11/5/24
 
+# Fixes error in Calculating # cards NOT returned
+
 # Setting up crab simulations, contains calculations
 # Look at "VisualizeSimulateData_ST.R" for data visualization
 
@@ -118,7 +120,7 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
   TempCalc<- Late + Returned
   
   if(Issued < TempCalc){
-    Late <- Issued - Returned
+    Late <- Issued - Returned   # if there are more late cards than cards available, this assigns all remaining cards as late. RETHINK THIS
     print("Assigned more late cards than cards left, rethink parameters")
   }
   
