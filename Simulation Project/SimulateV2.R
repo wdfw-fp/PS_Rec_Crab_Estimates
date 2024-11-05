@@ -1,6 +1,6 @@
 # Simulation Code
 # S. Thurner
-# 10/29/24
+# 11/5/24
 
 # Setting up crab simulations, contains calculations
 # Look at "VisualizeSimulateData_ST.R" for data visualization
@@ -95,7 +95,7 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
   
 
  
-  Returned<- PRet * Issued #calculate # cards returned
+  Returned<- round(PRet * Issued, digits = 0) #calculate # cards returned, round to whole number
   
   
   # Sample proportion mail/online from uniform distribution if = 99
@@ -103,7 +103,7 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
     PMail<- runif(1, min = min(CRCTotals$Perc_Mail), max (CRCTotals$Perc_Mail))
   } else{PMail <- setpmail}
   
-  ReturnedMail<- PMail*Returned  #calculate # returned via mail
+  ReturnedMail<- round(PMail*Returned, digits = 0)  #calculate # returned via mail, round
   ReturnedOnline<- Returned - ReturnedMail  #calculate # returned via online
   
   
@@ -113,11 +113,30 @@ SimulateCatch<- function(nissued, setpret, setpmail, setplate, samptype, latecat
     PLate <- runif(1, min = min(LateSummary$SummerRatio), max = max(LateSummary$SummerRatio))
   } else( PLate<- setplate)
   
-  Late<- ReturnedMail*PLate  #calculate # returned late
+  Late<- round(ReturnedMail*PLate, digits = 0)  #calculate # returned late, round to whole number
+  
+  TempCalc<- Late + Returned
+  
+  if(Issued < TempCalc){
+    Late <- Issued - Returned
+    print("Assigned more late cards than cards left, rethink parameters")
+  }
   
   
   # Calculate Number Not Returned
-  NoResponse<- Issued - Returned
+  NoResponse<- Issued - Returned - Late # corrected this on 11/5/24
+  
+  if(NoResponse < 0){
+    print("ERROR, NO RESPONSE < 0")
+    break
+  }
+  
+  TempCalc<- NoResponse + Returned + Late
+  
+  if(TempCalc != Issued){
+    print("ERROR, INCORRECT TOTAL NUMBER OF CARDS")
+    break
+  }
   
   
   # Create Tibble to return
