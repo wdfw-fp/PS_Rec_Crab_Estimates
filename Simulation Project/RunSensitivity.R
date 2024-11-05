@@ -4,7 +4,14 @@
 
 # WORK IN PROGRESS!!!!!!!!!!!
 
+#note: NWIFC method assumes 0.238 plate
+
 source("SimulateV2.R") #loads data, functions
+source("RunSimulationsv2.R")
+
+
+library(beepr)
+
 
 library(gridExtra)
 library(grid)
@@ -29,7 +36,7 @@ library(reshape2)
 
 RunSensitivity<- function(whichparam, sensseq, NSim, nissued, setpret, setpmail, setplate, samptype, latecat, samptypenr){
   
-  # percent who return on time 
+  # sensitivity to percent who return on time (pret) 
   
   if(whichparam == 2){
     
@@ -43,7 +50,7 @@ RunSensitivity<- function(whichparam, sensseq, NSim, nissued, setpret, setpmail,
       
       Resultstoplot<- tibble(Total = rep(NA, NSim), NWIFCTotal = rep(NA, NSim), NWIFCErrorinCatch = rep(NA, NSim), NWIFCPercentError = rep(NA, NSim), WDFWTotal = rep(NA, NSim), WDFWErrorinCatch = rep(NA, NSim), WDFWPercentError= rep(NA, NSim))
       
-      for(i in 1:500){
+      for(i in 1:NSim){
         Temp<- TempSim[[i]]
         Resultstoplot[i, 1]<- Temp[[1]][[2]][5]  # Total
         Resultstoplot[i, 2]<-Temp[[1]][[3]][5]  #Total NWIFC
@@ -68,21 +75,21 @@ RunSensitivity<- function(whichparam, sensseq, NSim, nissued, setpret, setpmail,
   
   
   
-  
+  # Percent late
   
   if(whichparam == 4){
     
-    SensResults<- tibble(plate = rep(NA, length(sensseq)), NWIFC_meanerror = rep(NA, length(sensseq)), NWIFC_sderror = rep(NA, length(sensseq)), NWIFC_meanpercerror= rep(NA, length(sensseq)), WDFW_meanerror = rep(NA, length(sensseq)), WDFW_sderror = rep(NA, length(sensseq)), WDFW_meanpercerror = rep(NA, length(sensseq)))
+    SensResults<- tibble(plate = rep(NA, length(sensseq)), NWIFC_meanerror = rep(NA, length(sensseq)), NWIFC_sderror = rep(NA, length(sensseq)), NWIFC_meanpercerror= rep(NA, length(sensseq)), WDFW_meanerror = rep(NA, length(sensseq)), WDFW_sderror = rep(NA, length(sensseq)), WDFW_meanpercerror = rep(NA, length(sensseq))) #empty results tibble
     
     for(p in 1:length(sensseq)){
       
-      SensResults[p, 1]<- sensseq[p]
+      SensResults[p, 1]<- sensseq[p]  #store plate
       
-      TempSim<- RunSims(nloop = NSim, nissued = nissued, setpret = setpret, setpmail = setpmail, setplate = sensseq[p], samptype = samptype, latecat = latecat, samptypenr = samptypenr)
+      TempSim<- RunSims(nloop = NSim, nissued = nissued, setpret = setpret, setpmail = setpmail, setplate = sensseq[p], samptype = samptype, latecat = latecat, samptypenr = samptypenr) #run sims
       
-      Resultstoplot<- tibble(Total = rep(NA, NSim), NWIFCTotal = rep(NA, NSim), NWIFCErrorinCatch = rep(NA, NSim), NWIFCPercentError = rep(NA, NSim), WDFWTotal = rep(NA, NSim), WDFWErrorinCatch = rep(NA, NSim), WDFWPercentError= rep(NA, NSim))
+      Resultstoplot<- tibble(Total = rep(NA, NSim), NWIFCTotal = rep(NA, NSim), NWIFCErrorinCatch = rep(NA, NSim), NWIFCPercentError = rep(NA, NSim), WDFWTotal = rep(NA, NSim), WDFWErrorinCatch = rep(NA, NSim), WDFWPercentError= rep(NA, NSim)) #empty results tibble
       
-      for(i in 1:500){
+      for(i in 1:NSim){
         Temp<- TempSim[[i]]
         Resultstoplot[i, 1]<- Temp[[1]][[2]][5]  # Total
         Resultstoplot[i, 2]<-Temp[[1]][[3]][5]  #Total NWIFC
@@ -103,7 +110,7 @@ RunSensitivity<- function(whichparam, sensseq, NSim, nissued, setpret, setpmail,
     }
     
   }
-  
+  beep()
   return(SensResults)
 }
 
@@ -113,7 +120,7 @@ RunSensitivity<- function(whichparam, sensseq, NSim, nissued, setpret, setpmail,
 # Sensitivity Test: Sensitivity of results to % Late, Late same as mail
 
 plateseq<- seq(from = 0, to = 0.5, by = .01)
-Sensitivity1<- RunSensitivity(whichparam = 4, sensseq = plateseq, NSim = 500, nissued = 20000, setpret = 99, setpmail = 99, setplate = NA, samptype = 2, latecat = 3, samptypenr = 2)
+Sensitivity1<- RunSensitivity(whichparam = 4, sensseq = plateseq, NSim = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = NA, samptype = 2, latecat = 3, samptypenr = 2)
   
 # Sensitivity1melt<- melt(Sensitivity1[,c(1,2,5)], id.vars="plate")
 
@@ -135,18 +142,19 @@ Sensitivity1longerEVENLONGER<- Sensitivity1longer[,-c(4,5)] %>% pivot_longer(-c(
 # total catch vs error -- plotted as lines
 pdf("Plots/sensitivity1_v2.pdf")
 ggplot(Sensitivity1longerEVENLONGER, aes(x = plate, y = value, col = method))+
-  geom_line(aes(linetype = name), size = 1) +
+  geom_line(aes(linetype = name), linewidth = 1) +
   scale_linetype_manual(values = c("dotdash", "solid", "dotdash")) + 
   labs(title = "Late same as mail", x = "plate", y = "error")
 dev.off()
 
+saveRDS(Sensitivity1, "resultsRDS/Sensitivity1.rds")
 
 
 
 # Sensitivity Test: Sensitivity of results to % Late, Late same as Survey
 
 plateseq<- seq(from = 0, to = 0.5, by = .01)
-Sensitivity2<- RunSensitivity(whichparam = 4, sensseq = plateseq, NSim = 500, nissued = 20000, setpret = 99, setpmail = 99, setplate = NA, samptype = 2, latecat = 4, samptypenr = 2)
+Sensitivity2<- RunSensitivity(whichparam = 4, sensseq = plateseq, NSim = 1000, nissued = 20000, setpret = 99, setpmail = 99, setplate = NA, samptype = 2, latecat = 4, samptypenr = 2)
 
 Sensitivity2longer<- Sensitivity2 %>% 
   pivot_longer(-plate, 
@@ -159,6 +167,8 @@ Sensitivity2longer<- Sensitivity2longer %>%
 Sensitivity2longerEVENLONGER<- Sensitivity2longer[,-c(4,5)] %>% pivot_longer(-c(plate, method))
 
 
+
+
 # Scatterplot of total catch vs error
 pdf("Plots/sensitivity2_v2.pdf")
 ggplot(Sensitivity2longerEVENLONGER, aes(x = plate, y = value, col = method))+
@@ -168,10 +178,17 @@ ggplot(Sensitivity2longerEVENLONGER, aes(x = plate, y = value, col = method))+
 dev.off()
 
 
-# Sensitivity Test: Sensitivity of results to % returned on time
+saveRDS(Sensitivity2, "resultsRDS/Sensitivity2.rds")
 
-pretseq<- seq(from = 0, to = .8, by = .02)
-Sensitivity3<- RunSensitivity(whichparam = 2, sensseq = pretseq, NSim = 500, nissued = 20000, setpret = NA, setpmail = 99, setplate = 99, samptype = 2, latecat = 3, samptypenr = 2)
+
+
+
+
+
+# Sensitivity Test: Sensitivity of results to % returned on time, late same as mail
+
+pretseq<- seq(from = .1, to = 0.8, by = .025)
+Sensitivity3<- RunSensitivity(whichparam = 2, sensseq = pretseq, NSim = 1000, nissued = 20000, setpret = NA, setpmail = 99, setplate = 99, samptype = 2, latecat = 3, samptypenr = 2)
 
 Sensitivity3longer<- Sensitivity3 %>% 
   pivot_longer(-pret, 
@@ -189,5 +206,41 @@ pdf("Plots/sensitivity3v2.pdf")
 ggplot(Sensitivity3longerEVENLONGER, aes(x = pret, y = value, col = method))+
   geom_line(aes(linetype = name), size = 1) +
   scale_linetype_manual(values = c("dotdash", "solid", "dotdash")) + 
-  labs(title = "Late same as survey", x = "plate", y = "error")
+  labs(title = "Late same as mail, sens to pret", x = "Pret", y = "error")
 dev.off()
+
+
+saveRDS(Sensitivity3, "resultsRDS/Sensitivity3.rds")
+
+
+
+
+
+
+
+# Sensitivity Test: Sensitivity of results to % returned on time, late same as surv
+
+pretseq<- seq(from = .1, to = 0.8, by = .025)
+Sensitivity4<- RunSensitivity(whichparam = 2, sensseq = pretseq, NSim = 1000, nissued = 20000, setpret = NA, setpmail = 99, setplate = 99, samptype = 2, latecat = 4, samptypenr = 2)
+
+Sensitivity4longer<- Sensitivity4 %>% 
+  pivot_longer(-pret, 
+               names_to = c("method", ".value"), 
+               names_sep="_" )
+
+Sensitivity4longer<- Sensitivity4longer %>% 
+  mutate(LowerCI = meanerror - 1.96*sderror, UpperCI = meanerror + 1.96*sderror)
+
+Sensitivity4longerEVENLONGER<- Sensitivity4longer[,-c(4,5)] %>% pivot_longer(-c(pret, method))
+
+
+# Scatterplot of total catch vs error
+pdf("Plots/sensitivity4v2.pdf")
+ggplot(Sensitivity4longerEVENLONGER, aes(x = pret, y = value, col = method))+
+  geom_line(aes(linetype = name), size = 1) +
+  scale_linetype_manual(values = c("dotdash", "solid", "dotdash")) + 
+  labs(title = "Late same as surv, sens to pret", x = "Pret", y = "error")
+dev.off()
+
+
+saveRDS(Sensitivity4, "resultsRDS/Sensitivity4.rds")
