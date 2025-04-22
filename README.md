@@ -13,3 +13,6 @@ Currently, this repo also contains the cleaned crab creel data from the 2023 Pug
 
 **UPDATE**
 11/22/2024 - An updated script was uploaded with revised data aggregation processes based on recommendations from the Joint State Tribal Technical Workging group ("FUNCTION_SW_CRC_Estimate - TWG UpdateV3.R"). An new seasons/areas template was also provided ("CRC Data//CRC Estimate Function Inputs"). 
+
+**UPDATE**
+4/22/2024 - An updated script was uploaded that was generated to produce recreational catch estimates from raw CRC data using recommendations from the Joint State Tribal Technical Working group and uses data from the 2023 Responsive Management survey to estimate the catch of non-respondents. This updated code has removed the previously used non-response bias correction model. Associated parameter files needed to excetcute the calculations were also updated. 
