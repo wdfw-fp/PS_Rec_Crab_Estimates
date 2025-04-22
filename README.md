@@ -4,7 +4,7 @@ This repository includes the code and data used to generate harvest estimates ba
 We have also supplied all the data and analysis used to produce the partitioning catch amoung Marine Areas to better align with the quota management areas used for harvest management. The partitioning survey data was used to produce the 2024 harvest estimates. These files can be found under the the **Partitioning Survey** folder. 
 
 
-Currently, this repo also contains the cleaned crab creel data from the 2023 Puget Sound pilot creel study along with the associated metadata. This information can be found under the **Creel Data** folder.
+Currently, this repo also contains the data from the Dungnesess crab creel project along with the associated metadata. This information can be found under the **Creel Data** folder.
 
 
 
