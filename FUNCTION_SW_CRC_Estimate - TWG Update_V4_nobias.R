@@ -10,10 +10,9 @@ library(lubridate)
 library(plyr)
 library(writexl)
 
-###Run function to summarize catch from CRCs
 
-
-CRC.Estimate.function <- function(Year=Year, Season=Season, prop.25C=prop.25C, data.name=data.name){
+CRC.Estimate.function <- function(Year=Year, Season=Season, prop.25C=prop.25C, prop.6A=prop.6A, prop.6B=prop.6B, 
+                                  prop.6C=prop.6C, prop.6D=prop.6D, prop.7A=prop.7A, data.name=data.name){
 
 ############Bring in data#########
   #Set the current directory of interest
@@ -573,7 +572,7 @@ if(Season=="Summer")
 data.name=paste0("Catch Data"," ",Season," ",Year,".xlsx")
 
 ######RUN FUNCTION
-#CRC.Estimate.function(Year, Season, prop.25C, data.name)
+CRC.Estimate.function(Year, Season, prop.25C, prop.6A, prop.6B, prop.6C, prop.6D, prop.7A, data.name)
 
 
 
